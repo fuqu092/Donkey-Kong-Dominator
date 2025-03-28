@@ -292,7 +292,6 @@ MonoBehaviour:
   moveSpeed: 3
   climbSpeed: 3
   jumpStrength: 4
-  gameManager: {fileID: 0}
   moveX: 0
   moveY: 0
   jump: 0
@@ -310,7 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 6
+    VectorObservationSize: 3
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
