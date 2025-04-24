@@ -166,4 +166,4 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   threshold: 0.5
-  moveSpeed: 4
+  moveSpeed: 3

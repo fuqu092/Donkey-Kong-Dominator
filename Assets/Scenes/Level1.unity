@@ -277,7 +277,7 @@ MonoBehaviour:
   agentParameters:
     maxStep: 0
   hasUpgradedFromAgentParameters: 1
-  MaxStep: 0
+  MaxStep: 5000
   runSprites:
   - {fileID: -8540619613172979209, guid: 409f9e0d69cee984793d44169bd7d3a5, type: 3}
   - {fileID: 9030281449398581296, guid: 73526d7e69c028d449daef4cb6f76ea8, type: 3}
@@ -288,14 +288,14 @@ MonoBehaviour:
   - {fileID: 21300000, guid: 792c083bcabfefd47b23072ba71471f9, type: 3}
   - {fileID: 21300000, guid: e8d510de4ffea314e84164e8b0803159, type: 3}
   - {fileID: 21300000, guid: 792c083bcabfefd47b23072ba71471f9, type: 3}
-  isClimbing: 0
+  isGrounded: 0
+  canClimb: 0
   moveSpeed: 3
   climbSpeed: 3
   jumpStrength: 4
   moveX: 0
   moveY: 0
   jump: 0
-  objectiveTransform: {fileID: 842079029}
 --- !u!114 &166081365
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -309,7 +309,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_BrainParameters:
-    VectorObservationSize: 3
+    VectorObservationSize: 26
     NumStackedVectorObservations: 1
     m_ActionSpec:
       m_NumContinuousActions: 2
@@ -320,7 +320,7 @@ MonoBehaviour:
     hasUpgradedBrainParametersWithActionSpec: 1
   m_Model: {fileID: 0}
   m_InferenceDevice: 0
-  m_BehaviorType: 1
+  m_BehaviorType: 0
   m_BehaviorName: PlayerAgent
   TeamId: 0
   m_UseChildSensors: 1
@@ -342,6 +342,22 @@ MonoBehaviour:
   DecisionPeriod: 5
   DecisionStep: 0
   TakeActionsBetweenDecisions: 1
+--- !u!114 &166081371
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 166081358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: f2902496c0120472b90269f94a0aec7e, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  Record: 0
+  NumStepsToRecord: 0
+  DemonstrationName: KongDemo
+  DemonstrationDirectory: Demos
 --- !u!1001 &304038315
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -429,7 +445,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 6537841309806185134, guid: a703aae4c32aeef4c9ad1c9aee9cfc8a, type: 3}
       propertyPath: m_LocalPosition.y
-      value: 6.89
+      value: 6.9
       objectReference: {fileID: 0}
     - target: {fileID: 6537841309806185134, guid: a703aae4c32aeef4c9ad1c9aee9cfc8a, type: 3}
       propertyPath: m_LocalPosition.z
@@ -777,6 +793,10 @@ PrefabInstance:
       propertyPath: m_Name
       value: DonkeyKong
       objectReference: {fileID: 0}
+    - target: {fileID: 2182468000029586620, guid: caf46774468a90b4eb6963281c750418, type: 3}
+      propertyPath: m_Layer
+      value: 16
+      objectReference: {fileID: 0}
     - target: {fileID: 2715236652300951706, guid: caf46774468a90b4eb6963281c750418, type: 3}
       propertyPath: m_LocalPosition.x
       value: -3.74
@@ -820,7 +840,10 @@ PrefabInstance:
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []
-    m_AddedComponents: []
+    m_AddedComponents:
+    - targetCorrespondingSourceObject: {fileID: 2182468000029586620, guid: caf46774468a90b4eb6963281c750418, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 1724488402}
   m_SourcePrefab: {fileID: 100100000, guid: caf46774468a90b4eb6963281c750418, type: 3}
 --- !u!1 &605100148
 GameObject:
@@ -1047,11 +1070,6 @@ Transform:
   m_Children: []
   m_Father: {fileID: 0}
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!4 &842079029 stripped
-Transform:
-  m_CorrespondingSourceObject: {fileID: 6537841309806185134, guid: a703aae4c32aeef4c9ad1c9aee9cfc8a, type: 3}
-  m_PrefabInstance: {fileID: 404062156}
-  m_PrefabAsset: {fileID: 0}
 --- !u!1001 &893689397
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -1142,6 +1160,9 @@ PrefabInstance:
     - targetCorrespondingSourceObject: {fileID: 2847248006511867638, guid: eb8f9c480594f9c4bb515e74d5d9c89d, type: 3}
       insertIndex: -1
       addedObject: {fileID: 166081366}
+    - targetCorrespondingSourceObject: {fileID: 2847248006511867638, guid: eb8f9c480594f9c4bb515e74d5d9c89d, type: 3}
+      insertIndex: -1
+      addedObject: {fileID: 166081371}
   m_SourcePrefab: {fileID: 100100000, guid: eb8f9c480594f9c4bb515e74d5d9c89d, type: 3}
 --- !u!1001 &915524976
 PrefabInstance:
@@ -2343,6 +2364,38 @@ PrefabInstance:
     m_AddedGameObjects: []
     m_AddedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: 71487f3880217734c9c9366de999ebfb, type: 3}
+--- !u!1 &1724488401 stripped
+GameObject:
+  m_CorrespondingSourceObject: {fileID: 2182468000029586620, guid: caf46774468a90b4eb6963281c750418, type: 3}
+  m_PrefabInstance: {fileID: 550052209}
+  m_PrefabAsset: {fileID: 0}
+--- !u!50 &1724488402
+Rigidbody2D:
+  serializedVersion: 5
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1724488401}
+  m_BodyType: 0
+  m_Simulated: 1
+  m_UseFullKinematicContacts: 0
+  m_UseAutoMass: 0
+  m_Mass: 1
+  m_LinearDamping: 0
+  m_AngularDamping: 0.05
+  m_GravityScale: 1
+  m_Material: {fileID: 0}
+  m_IncludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_ExcludeLayers:
+    serializedVersion: 2
+    m_Bits: 0
+  m_Interpolate: 0
+  m_SleepingMode: 1
+  m_CollisionDetection: 0
+  m_Constraints: 0
 --- !u!1001 &1794238495
 PrefabInstance:
   m_ObjectHideFlags: 0

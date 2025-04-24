@@ -1,8 +1,8 @@
-using Unity.VisualScripting;
 using UnityEngine;
 using Unity.MLAgents;
 using Unity.MLAgents.Actuators;
 using Unity.MLAgents.Sensors;
+using System.Linq;
 
 public class PlayerAgent : Agent
 {
@@ -13,6 +13,7 @@ public class PlayerAgent : Agent
     private Collider2D[] results2;
     public Sprite[] runSprites;
     public Sprite[] climbSprites;
+    GameObject[] barrels;
 
     private Vector2 direction;
 
@@ -27,6 +28,8 @@ public class PlayerAgent : Agent
     public float moveX;
     public float moveY;
     public int jump;
+
+    float maxY = -5.25f;
 
     private void getCollision()
     {
@@ -134,6 +137,12 @@ public class PlayerAgent : Agent
         }
 
         rigidbody.MovePosition(rigidbody.position + direction * Time.fixedDeltaTime);
+
+        if (transform.position.y > maxY && isGrounded)
+        {
+            AddReward((transform.position.y - maxY) * 2);
+            maxY = transform.position.y;
+        }
     }
 
     private void animateSprites()
@@ -167,17 +176,23 @@ public class PlayerAgent : Agent
     {
         if (collision.gameObject.CompareTag("Objective"))
         {
-            SetReward(+2f);
+            AddReward(+15f);
             EndEpisode();
         }
         else if (collision.gameObject.CompareTag("Obstacle"))
         {
-            SetReward(-1f);
+            AddReward(-5f);
             EndEpisode();
         }
     }
 
-    [SerializeField] private Transform objectiveTransform;
+    private void getBarrelPosition()
+    {
+        barrels = GameObject.FindGameObjectsWithTag("Obstacle");
+        barrels = barrels.OrderBy(g => Vector3.Distance(transform.position, g.transform.position)).ToArray();
+    }
+
+
     Vector3 objectivePosition = new Vector3(-1f, 6.9f, 0f);
 
     public override void Initialize()
@@ -192,6 +207,12 @@ public class PlayerAgent : Agent
 
     public override void OnEpisodeBegin()
     {
+        barrels = GameObject.FindGameObjectsWithTag("Obstacle");
+        for (int i = 0; i < barrels.Length; i++)
+        {
+            if (barrels[i].layer != LayerMask.NameToLayer("Kong"))
+                Destroy(barrels[i]);
+        }
         transform.position = new Vector3(-5.25f, -5.1f, 0f);
         rigidbody.linearVelocity = Vector2.zero;
     }
@@ -207,8 +228,53 @@ public class PlayerAgent : Agent
 
     public override void CollectObservations(VectorSensor sensor)
     {
-        sensor.AddObservation(transform.position);
-        sensor.AddObservation(objectivePosition);
+        getBarrelPosition();
+        getCollision();
+        checkCollisions();
+
+        sensor.AddObservation(transform.position.x);
+        sensor.AddObservation(transform.position.y);
+        sensor.AddObservation(objectivePosition.x);
+        sensor.AddObservation(objectivePosition.y);
+        sensor.AddObservation(canClimb);
+        sensor.AddObservation(isGrounded);
+
+        if (barrels.Length >= 5)
+        {
+            for (int i = 0; i < 5; i++)
+            {
+                sensor.AddObservation(barrels[i].transform.position.x);
+                sensor.AddObservation(barrels[i].transform.position.y);
+            }
+            for (int i = 0; i < 5; i++)
+            {
+                sensor.AddObservation(barrels[i].GetComponent<Rigidbody2D>().linearVelocity);
+            }
+        }
+        else
+        {
+            for (int i = 0; i < barrels.Length; i++)
+            {
+                sensor.AddObservation(barrels[i].transform.position.x);
+                sensor.AddObservation(barrels[i].transform.position.y);
+            }
+            for (int i = 0; i < 5 - barrels.Length; i++)
+            {
+                sensor.AddObservation(10);
+                sensor.AddObservation(10);
+            }
+
+            for (int i = 0; i < barrels.Length; i++)
+            {
+                sensor.AddObservation(barrels[i].GetComponent<Rigidbody2D>().linearVelocity);
+            }
+            for (int i = 0; i < 5 - barrels.Length; i++)
+            {
+                sensor.AddObservation(0);
+                sensor.AddObservation(0);
+            }
+
+        }
     }
 
     public override void OnActionReceived(ActionBuffers actions)
@@ -220,6 +286,7 @@ public class PlayerAgent : Agent
         moveY = actions.ContinuousActions[1];
         jump = actions.DiscreteActions[0];
 
+        AddReward(-1f / MaxStep);
         MoveAgent();
     }
 }

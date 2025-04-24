@@ -1,7 +1,4 @@
-using Unity.VisualScripting;
-using UnityEditor.Experimental.GraphView;
 using UnityEngine;
-using UnityEngine.AI;
 
 public class Barrel : MonoBehaviour{
     private new Rigidbody2D rigidbody;
@@ -13,13 +10,14 @@ public class Barrel : MonoBehaviour{
     private bool canFall;
     private bool isGrounded;
     public float threshold = 0.5f;
-    public float moveSpeed = 5f;
+    public float moveSpeed = 2f;
 
     private void Awake(){
         rigidbody = GetComponent<Rigidbody2D>();
         collider = GetComponent<Collider2D>();
         for(int i=0;i<8;i++){
-            rand_num[i] = Random.Range(0f, 1f);
+            // rand_num[i] = Random.Range(0f, 1f);
+            rand_num[i] = 0;
         }
     }
 
